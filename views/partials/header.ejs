@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | FITRACKER</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <% if (typeof user !== 'undefined' && user) { %>
+        <!-- Logged in navigation -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <a href="/">FITRACKER</a>
+            </div>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a href="/">Home</a></li>
+                <li class="nav-item"><a href="/about">About</a></li>
+                <li class="nav-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a href="/fitness-hub">Fitness Hub</a></li>
+                <li class="nav-item"><a href="/contact">Contact</a></li>
+                <li class="nav-item"><a href="/auth/logout">Logout</a></li>
+            </ul>
+        </nav>
+    <% } else { %>
+        <!-- Not logged in navigation -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <a href="/">FITRACKER</a>
+            </div>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a href="/">Home</a></li>
+                <li class="nav-item"><a href="/about">About</a></li>
+                <li class="nav-item"><a href="/contact">Contact</a></li>
+                <li class="nav-item"><a href="/login">Login</a></li>
+                <li class="nav-item"><a href="/signup">Sign Up</a></li>
+            </ul>
+        </nav>
+    <% } %>

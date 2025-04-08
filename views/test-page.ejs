@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<style>
+    .test-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        color: #006A71;
+        padding: 40px 20px;
+        text-align: center;
+    }
+    
+    h1 {
+        color: #006A71;
+        margin-bottom: 20px;
+    }
+    
+    p {
+        color: #48A6A7;
+        margin-bottom: 30px;
+    }
+    
+    .link-button {
+        display: inline-block;
+        background-color: #006A71;
+        color: #F2EFE7;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 10px;
+    }
+</style>
+
+<div class="test-container">
+    <h1>Test Page</h1>
+    <p>This is a test page to check if EJS rendering is working correctly.</p>
+    
+    <a href="/" class="link-button">Home</a>
+    <a href="/fitness-hub" class="link-button">Fitness Hub</a>
+</div>
+
+<%- include('partials/footer') %>

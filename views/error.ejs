@@ -1,0 +1,51 @@
+<%- include('partials/header') %>
+
+<style>
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 70vh;
+        text-align: center;
+        padding: 0 20px;
+        background-color: #F2EFE7;
+    }
+    
+    .error-title {
+        font-size: 2.5rem;
+        color: #006A71;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+    
+    .error-message {
+        font-size: 1.2rem;
+        color: #48A6A7;
+        margin-bottom: 2rem;
+    }
+    
+    .back-button {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .back-button:hover {
+        background-color: #48A6A7;
+        color: #F2EFE7;
+        box-shadow: 0 0 5px rgba(0, 106, 113, 0.3);
+    }
+</style>
+
+<div class="error-container">
+    <h1 class="error-title">Oops! Something went wrong</h1>
+    <p class="error-message"><%= message || 'An unexpected error occurred' %></p>
+    <button class="back-button" onclick="window.history.back()">Go Back</button>
+</div>

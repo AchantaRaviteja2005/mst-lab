@@ -1,0 +1,193 @@
+<%- include('partials/header') %>
+
+<style>
+    .page-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .login-container {
+        background: #9ACBD0;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #006A71;
+        margin-bottom: 1.5rem;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #006A71;
+        font-weight: 500;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #F2EFE7;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #F2EFE7;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #48A6A7;
+        box-shadow: 0 0 5px rgba(72, 166, 167, 0.3);
+    }
+
+    button {
+        width: 100%;
+        padding: 0.8rem;
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #48A6A7;
+    }
+
+    .signup-link {
+        text-align: center;
+        margin-top: 1rem;
+        color: #006A71;
+    }
+
+    .signup-link a {
+        color: #006A71;
+        text-decoration: none;
+        margin-left: 5px;
+        font-weight: bold;
+    }
+
+    .signup-link a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        color: #006A71;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: none;
+        font-weight: 500;
+    }
+</style>
+
+<div class="page-container">
+    <div class="login-container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username/E-mail</label>
+                <input type="text" id="username" name="username" required>
+                <div id="usernameError" class="error-message">Please enter a username</div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <div id="passwordError" class="error-message">Please enter a password</div>
+            </div>
+            <div id="loginError" class="error-message" style="margin-bottom: 1rem;">Invalid username or password</div>
+            <button type="submit">Log In</button>
+            <div class="signup-link">
+                <span>Don't have an account?</span>
+                <a href="/signup">Sign up</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const loginForm = document.getElementById("loginForm");
+        const usernameError = document.getElementById("usernameError");
+        const passwordError = document.getElementById("passwordError");
+        const loginError = document.getElementById("loginError");
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+
+        // Hide error messages when user starts typing
+        usernameInput.addEventListener("input", () => {
+            usernameError.style.display = "none";
+            loginError.style.display = "none";
+        });
+
+        passwordInput.addEventListener("input", () => {
+            passwordError.style.display = "none";
+            loginError.style.display = "none";
+        });
+
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            let isValid = true;
+            
+            // Reset error messages
+            usernameError.style.display = "none";
+            passwordError.style.display = "none";
+            loginError.style.display = "none";
+
+            // Validate username
+            if (username === "") {
+                usernameError.style.display = "block";
+                isValid = false;
+            }
+
+            // Validate password
+            if (password === "") {
+                passwordError.style.display = "block";
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Send login request to server
+            fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect || '/';
+                } else {
+                    loginError.textContent = data.message || 'Invalid username or password';
+                    loginError.style.display = 'block';
+                    passwordInput.value = ''; // Clear password field on failed login
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                loginError.textContent = 'An error occurred. Please try again.';
+                loginError.style.display = 'block';
+            });
+        });
+    });
+</script>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Playlist Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            padding: 10px;
+        }
+        .video {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        iframe {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            border-radius: 10px;
+            border: none;
+        }
+        @media (max-width: 600px) {
+            .video-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>30 Day Yoga Challenge - Day 1 to Day 30 | Yoga for Beginners &amp; Flexibility | Yoga Videos</h1>
+    <div class="video-container" id="playlist"></div>
+
+    <script>
+        const playlistId = "PLi7xA3cpIGd3Te6aYloRefZGfi4axOKy7"; 
+        const apiKey = "AIzaSyAjkmmzGm9CO5EUbXLD9PiYA2_O8FdcsSM";        
+        async function fetchPlaylist() {
+            const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlistId}&key=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            displayVideos(data.items);
+        }
+
+        function displayVideos(videos) {
+            const playlistContainer = document.getElementById("playlist");
+            playlistContainer.innerHTML = videos.map(video => {
+                const videoId = video.snippet.resourceId.videoId;
+                return `<div class="video">
+                            <iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <p>${video.snippet.title}</p>
+                        </div>`;
+            }).join("");
+        }
+
+        fetchPlaylist();
+    </script>
+</body>
+</html>

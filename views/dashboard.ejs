@@ -1,0 +1,349 @@
+<%- include('partials/header') %>
+
+<style>
+    .dashboard-container {
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+        background-color: #F2EFE7;
+    }
+
+    @media (min-width: 768px) {
+        .dashboard-container {
+            flex-direction: row;
+        }
+    }
+
+    .side-panel {
+        width: 100%;
+        background-color: #006A71;
+        color: #F2EFE7;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+
+    .side-panel h2 {
+        font-size: 18px;
+        margin-bottom: 5px;
+        border-bottom: 2px solid rgba(242, 239, 231, 0.3);
+        padding-bottom: 5px;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .profile-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        line-height: 1.3;
+        padding: 3px 0;
+    }
+
+    .profile-item strong {
+        min-width: 90px;
+        font-weight: 600;
+    }
+
+    .main-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        background-color: #F2EFE7;
+    }
+
+    .dashboard {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .card {
+        background: #9ACBD0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        padding: 12px 10px;
+        text-align: center;
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        min-height: 180px;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        background: #48A6A7;
+    }
+
+    .card h3 {
+        margin-bottom: 4px;
+        color: #006A71;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .card p {
+        font-size: 20px;
+        margin: 2px 0 6px;
+        color: #006A71;
+        font-weight: bold;
+    }
+
+    .card button {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        width: 100%;
+        max-width: 120px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    header h1 {
+        color: #006A71;
+        font-size: 24px;
+        margin-bottom: 2px;
+        font-weight: 700;
+    }
+
+    .header-subtext {
+        font-size: 14px;
+        color: #48A6A7;
+        font-weight: 300;
+    }
+
+    /* Styled input fields */
+    .card input[type="number"] {
+        padding: 6px 10px;
+        border: 1px solid #F2EFE7;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #006A71;
+        width: 80%;
+        max-width: 120px;
+        background-color: #F2EFE7;
+        outline: none;
+        margin-bottom: 6px;
+        transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .card input[type="number"]:focus {
+        border-color: #006A71;
+        box-shadow: 0 0 5px rgba(0, 106, 113, 0.3);
+    }
+
+    /* Sidebar button for Fitness Hub */
+    .side-panel a button {
+        background-color: #F2EFE7;
+        color: #006A71;
+        border: none;
+        padding: 10px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .side-panel a button:hover {
+        background-color: #9ACBD0;
+        box-shadow: 0 0 8px rgba(242, 239, 231, 0.5);
+    }
+
+
+    @media (min-width: 768px) {
+        .side-panel {
+            width: 220px;
+            min-height: calc(100vh - 60px);
+            padding: 15px;
+        }
+
+        .dashboard {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .card {
+            padding: 15px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+        }
+
+        .card p {
+            font-size: 22px;
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .side-panel {
+            width: 250px;
+        }
+
+        .dashboard {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .dashboard {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="side-panel">
+        <h2>Profile Details</h2>
+        <div class="profile-info">
+            <div class="profile-item"><strong>Username:</strong> <%= user.username %></div>
+            <div class="profile-item"><strong>Account:</strong> <%= user.profile.accountType %></div>
+            <div class="profile-item"><strong>Age:</strong> <%= user.profile.age %></div>
+            <div class="profile-item"><strong>Height:</strong> <%= user.profile.height %></div>
+        </div>
+        <hr style="margin:10px 0; border-color:rgba(242,239,231,0.3);">
+        <a href="/fitness-hub" style="color:#F2EFE7; text-decoration:none; font-weight:bold;">
+            <button style="width:100%; margin-top:5px;">Fitness Hub</button>
+        </a>
+        <a href="/auth/logout" style="color:#F2EFE7; text-decoration:none; font-weight:bold; margin-top: 10px;">
+            <button style="width:100%; margin-top:5px; background-color: #F2EFE7; color: #006A71;">Logout</button>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Fitness Dashboard</h1>
+            <p class="header-subtext">Track and improve your health</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Water -->
+            <div class="card">
+                <h3>Water Consumed</h3>
+                <p id="waterDisplay"><%= user.fitnessData.water %> L</p>
+                <input type="number" id="waterInput" placeholder="Liters" step="0.1">
+                <button onclick="updateValue('water')">Update</button>
+            </div>
+
+            <!-- Calories Consumed -->
+            <div class="card">
+                <h3>Calories Consumed</h3>
+                <p id="caloriesInDisplay"><%= user.fitnessData.caloriesIn %> kcal</p>
+                <input type="number" id="caloriesInInput" placeholder="kcal">
+                <button onclick="updateValue('caloriesIn')">Update</button>
+            </div>
+
+            <!-- Calories Burned -->
+            <div class="card">
+                <h3>Calories Burned</h3>
+                <p id="caloriesOutDisplay"><%= user.fitnessData.caloriesOut %> kcal</p>
+                <input type="number" id="caloriesOutInput" placeholder="kcal">
+                <button onclick="updateValue('caloriesOut')">Update</button>
+            </div>
+
+            <!-- Fitness Score -->
+            <div class="card">
+                <h3>Fitness Score</h3>
+                <p id="fitnessScore"><%= user.fitnessData.fitnessScore %>/10</p>
+                <button onclick="calculateFitnessScore()">Recalculate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateValue(type) {
+        let input, display, value;
+        
+        if (type === 'water') {
+            input = document.getElementById('waterInput');
+            display = document.getElementById('waterDisplay');
+            value = input.value;
+            if (value) display.innerText = value + ' L';
+        }
+        if (type === 'caloriesIn') {
+            input = document.getElementById('caloriesInInput');
+            display = document.getElementById('caloriesInDisplay');
+            value = input.value;
+            if (value) display.innerText = value + ' kcal';
+        }
+        if (type === 'caloriesOut') {
+            input = document.getElementById('caloriesOutInput');
+            display = document.getElementById('caloriesOutDisplay');
+            value = input.value;
+            if (value) display.innerText = value + ' kcal';
+        }
+        
+        if (value) {
+            // Send update to server
+            fetch('/dashboard/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ type, value })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Failed to update: ' + (data.message || 'Unknown error'));
+                }
+                input.value = ''; // Clear input field
+            })
+            .catch(error => {
+                console.error('Update error:', error);
+                alert('An error occurred while updating');
+            });
+        }
+    }
+
+    function calculateFitnessScore() {
+        fetch('/dashboard/calculate-score', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('fitnessScore').innerText = `${data.score}/10`;
+            } else {
+                alert('Failed to calculate score: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Score calculation error:', error);
+            alert('An error occurred while calculating fitness score');
+        });
+    }
+</script>

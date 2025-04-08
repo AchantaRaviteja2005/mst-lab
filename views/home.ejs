@@ -1,0 +1,292 @@
+<%- include('partials/header') %>
+
+<style>
+    .home-container {
+        background: #F2EFE7;
+        color: #006A71;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden;
+        min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+        width: 100%;
+    }
+
+    .hero-section {
+        min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 20px;
+        padding: 20px 10px;
+    }
+
+    .slider-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .slider-container .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 106, 113, 0.4);
+        z-index: 1;
+    }
+
+    .carousel-title {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    .carousel-title h1 {
+        font-size: clamp(2rem, 8vw, 3.5rem);
+        margin-bottom: 5px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        color: #F2EFE7;
+        font-weight: bold;
+    }
+
+    .carousel-title p {
+        font-size: clamp(1rem, 4vw, 1.5rem);
+        margin-bottom: 10px;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        color: #9ACBD0;
+    }
+    
+    .carousel-title hr {
+        border: none;
+        height: 2px;
+        background: #48A6A7;
+        width: 60%;
+        margin: 0 auto;
+    }
+
+    .slider {
+        display: flex;
+        width: 400%;
+        height: 100%;
+        animation: slide 20s infinite;
+    }
+
+    .slide {
+        width: 25%;
+        height: 100%;
+    }
+
+    .slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .features {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+        padding: 20px 10px;
+        z-index: 3;
+        margin-top: 20px;
+    }
+
+    .feature-card {
+        background: rgba(154, 203, 208, 0.9);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s, background 0.3s;
+        flex: 1 1 200px;
+        max-width: 280px;
+        color: #006A71;
+        cursor: pointer;
+    }
+
+    .feature-card:hover {
+        transform: scale(1.05);
+        background: rgba(72, 166, 167, 0.9);
+        color: #F2EFE7;
+    }
+
+    .feature-card h3 {
+        margin-bottom: 10px;
+        font-size: clamp(1rem, 4vw, 1.3rem);
+        font-weight: bold;
+    }
+
+    .feature-card p {
+        font-size: clamp(0.8rem, 3vw, 1rem);
+    }
+
+    .feature-card hr {
+        border: none;
+        height: 1px;
+        background: #006A71;
+        margin-bottom: 10px;
+        width: 80%;
+        margin: 10px auto;
+    }
+
+    @keyframes slide {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-25%); }
+        50% { transform: translateX(-50%); }
+        75% { transform: translateX(-75%); }
+        100% { transform: translateX(0); }
+    }
+
+    /* Small devices (phones) */
+    @media (max-width: 576px) {
+        .features {
+            padding: 15px 5px;
+        }
+        
+        .feature-card {
+            flex: 1 1 100%;
+            max-width: 100%;
+            margin: 0 10px;
+        }
+        
+        .carousel-title h1 {
+            font-size: clamp(1.8rem, 8vw, 2.5rem);
+        }
+        
+        .carousel-title br, .carousel-title hr {
+            margin: 5px auto;
+        }
+    }
+
+    /* Medium devices (tablets) */
+    @media (min-width: 577px) and (max-width: 768px) {
+        .feature-card {
+            flex: 1 1 45%;
+            max-width: 45%;
+        }
+    }
+
+    /* Large devices (desktops) */
+    @media (min-width: 769px) and (max-width: 992px) {
+        .feature-card {
+            flex: 1 1 40%;
+            max-width: 40%;
+        }
+    }
+
+    /* Extra large devices */
+    @media (min-width: 993px) {
+        .features {
+            max-width: 1200px;
+        }
+        
+        .feature-card {
+            flex: 1 1 200px;
+        }
+    }
+
+    /* Handle super small or landscape orientation */
+    @media (max-height: 500px) {
+        .hero-section {
+            min-height: calc(100vh - 60px);
+            height: auto;
+            padding: 50px 10px;
+        }
+        
+        .features {
+            margin-top: 10px;
+            gap: 10px;
+        }
+        
+        .feature-card {
+            padding: 10px;
+        }
+    }
+</style>
+
+<div class="home-container">
+    <div class="hero-section">
+        <div class="slider-container">
+            <div class="slider">
+                <div class="slide">
+                    <img src="https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg" alt="Workout 1">
+                </div>
+                <div class="slide">
+                    <img src="https://cdn.muscleandstrength.com/sites/default/files/styles/800x500/public/lean-man-doing-lateral-raises.jpg" alt="Workout 2">
+                </div>
+                <div class="slide">
+                    <img src="https://cdn.gymaholic.co/articles/139-women-home-and-gym-workout-routines/women-home-and-gym-workout-routines.jpg" alt="Workout 3">
+                </div>
+                <div class="slide">
+                    <img src="https://media.post.rvohealth.io/wp-content/uploads/sites/2/2020/06/GRT-female-yoga-at-home-peaceful-1296x728-header.jpg" alt="Workout 4">
+                </div>
+            </div>
+        </div>
+        <div class="carousel-title">
+            <h1>FITRACKER</h1>
+            <br><hr><br>
+            <p>Transform your life. Real results.</p>
+        </div>
+        <div class="features">
+            <div class="feature-card" name="Track">
+                <h3>Track Your Progress</h3>
+                <hr>
+                <p>Monitor your daily fitness activities and stay on top of your goals.</p>
+            </div>
+            <div class="feature-card" name="Workout">
+                <h3>Personalized Workouts</h3>
+                <hr>
+                <p>Get customized workout plans tailored to your fitness level.</p>
+            </div>
+            <div class="feature-card" name="Nutrition">
+                <h3>Nutrition Plans</h3>
+                <hr>
+                <p>Access diet and nutrition guidance for a healthier lifestyle.</p>
+            </div>
+            <div class="feature-card" name="Connect">
+                <h3>Connect with Trainers</h3>
+                <hr>
+                <p>Book sessions and chat with professional trainers.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const featureCards = document.querySelectorAll(".feature-card");
+        
+        featureCards.forEach(card => {
+            card.addEventListener("click", () => {
+                const isLoggedIn = <%= user ? 'true' : 'false' %>;
+                
+                if (!isLoggedIn) {
+                    alert("You must be logged in to access this feature.");
+                    window.location.href = "/login"; 
+                } else {
+                    if (card.getAttribute("name") === "Track") {
+                        window.location.href = "/dashboard";
+                    } else if (card.getAttribute("name") === "Workout") {
+                        window.location.href = "/fitness-hub";
+                    } else if (card.getAttribute("name") === "Nutrition") {
+                        window.location.href = "/fitness-hub/nutrition";
+                    } else if (card.getAttribute("name") === "Connect") {
+                        window.location.href = "/contact";
+                    }
+                }
+            });
+        });
+    });
+</script>

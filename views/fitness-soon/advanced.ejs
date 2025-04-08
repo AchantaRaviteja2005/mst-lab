@@ -1,0 +1,95 @@
+<%- include('../partials/header') %>
+
+<style>
+    .fitness-content-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        color: #006A71;
+        padding: 20px;
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .page-header h1 {
+        color: #006A71;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .page-header p {
+        color: #48A6A7;
+        font-size: 16px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #006A71;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .back-link:hover {
+        text-decoration: underline;
+    }
+    
+    .content-section {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: #9ACBD0;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .content-section h2 {
+        color: #006A71;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    
+    .content-section p {
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+    
+    .coming-soon {
+        text-align: center;
+        padding: 40px 0;
+    }
+    
+    .coming-soon h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    
+    .coming-soon p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="fitness-content-container">
+    <a href="/fitness-hub" class="back-link">← Back to Fitness Hub</a>
+    
+    <div class="page-header">
+        <h1>Advanced Challenge</h1>
+        <p>Push your limits with high-intensity training designed for seasoned athletes</p>
+    </div>
+    
+    <div class="content-section">
+        <div class="coming-soon">
+            <h2>Coming Soon!</h2>
+            <p>Our Advanced Challenge program is currently in development.</p>
+            <p>Check back soon for expert-level workouts, progressive overload techniques, and advanced training methodologies to take your fitness to the next level.</p>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

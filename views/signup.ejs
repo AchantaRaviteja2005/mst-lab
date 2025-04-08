@@ -1,0 +1,209 @@
+<%- include('partials/header') %>
+
+<style>
+    .page-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .login-container {
+        background: #9ACBD0;
+        padding: 2rem;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+    }
+
+    h1 {
+        text-align: center;
+        color: #006A71;
+        margin-bottom: 1.5rem;
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #006A71;
+        font-weight: 500;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #F2EFE7;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #F2EFE7;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #48A6A7;
+        box-shadow: 0 0 5px rgba(72, 166, 167, 0.3);
+    }
+
+    button {
+        width: 100%;
+        padding: 0.8rem;
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #48A6A7;
+    }
+
+    .error-message {
+        color: #006A71;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: none;
+        font-weight: 500;
+    }
+
+    p {
+        text-align: center;
+        margin-top: 1rem;
+        color: #006A71;
+    }
+
+    p a {
+        color: #006A71;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    p a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="page-container">
+    <div class="login-container">
+        <h1>Sign Up</h1>
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+                <div id="usernameError" class="error-message">Please enter a username</div>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
+                <div id="emailError" class="error-message">Please enter a valid email</div>
+            </div>
+            <div class="form-group">
+                <label for="password1">Password</label>
+                <input type="password" id="password1" name="password1" required>
+                <div id="password1Error" class="error-message">Please enter a password</div>
+            </div>
+            <div class="form-group">
+                <label for="password2">Re-enter Password</label>
+                <input type="password" id="password2" name="password2" required>
+                <div id="password2Error" class="error-message">Passwords do not match</div>
+            </div>
+            <div id="signupError" class="error-message" style="margin-bottom: 1rem; display: none;">Error message here</div>
+            <button type="submit">Sign Up</button>
+            <p>Already have an account? <a href="/login">Login</a></p>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const signupForm = document.getElementById("signupForm");
+        const usernameError = document.getElementById("usernameError");
+        const emailError = document.getElementById("emailError");
+        const password1Error = document.getElementById("password1Error");
+        const password2Error = document.getElementById("password2Error");
+        const signupError = document.getElementById("signupError");
+
+        signupForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password1 = document.getElementById("password1").value.trim();
+            const password2 = document.getElementById("password2").value.trim();
+            let isValid = true;
+            
+            // Reset error messages
+            usernameError.style.display = "none";
+            emailError.style.display = "none";
+            password1Error.style.display = "none";
+            password2Error.style.display = "none";
+            signupError.style.display = "none";
+
+            // Validate username
+            if (username === "") {
+                usernameError.style.display = "block";
+                isValid = false;
+            }
+
+            // Validate email
+            if (email === "" || !email.includes('@')) {
+                emailError.style.display = "block";
+                isValid = false;
+            }
+
+            // Validate password
+            if (password1 === "") {
+                password1Error.style.display = "block";
+                isValid = false;
+            }
+
+            // Validate password match
+            if (password1 !== password2) {
+                password2Error.style.display = "block";
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Send registration request to server
+            fetch('/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    username, 
+                    email, 
+                    password: password1, 
+                    password2: password2 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect || '/';
+                } else {
+                    signupError.textContent = data.message || 'Registration failed';
+                    signupError.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Registration error:', error);
+                signupError.textContent = 'An error occurred. Please try again.';
+                signupError.style.display = 'block';
+            });
+        });
+    });
+</script>
