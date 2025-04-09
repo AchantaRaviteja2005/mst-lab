@@ -6,6 +6,11 @@ const isAuthenticated = (req, res, next) => {
   if (req.session.user) {
     return next();
   }
+  // For contact page, redirect to login-required page
+  if (req.path === '/contact') {
+    return res.render('login-required', { title: 'Login Required' });
+  }
+  // For other protected routes, redirect to login
   res.redirect('/login');
 };
 
@@ -35,9 +40,12 @@ router.get('/about', (req, res) => {
   res.render('about', { title: 'About Us' });
 });
 
-// Contact page
-router.get('/contact', (req, res) => {
-  res.render('contact', { title: 'Contact Us' });
+// Contact page - require authentication
+router.get('/contact', isAuthenticated, (req, res) => {
+  res.render('contact', { 
+    title: 'Contact Us',
+    user: req.session.user
+  });
 });
 
 // Training page

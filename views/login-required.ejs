@@ -1,0 +1,81 @@
+<%- include('partials/header') %>
+
+<style>
+    .login-required-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .message-box {
+        background-color: #9ACBD0;
+        border-radius: 10px;
+        padding: 30px;
+        max-width: 500px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+        color: #006A71;
+        margin-bottom: 15px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    p {
+        color: #006A71;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+    
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-primary {
+        background-color: #006A71;
+        color: #F2EFE7;
+    }
+    
+    .btn-primary:hover {
+        background-color: #48A6A7;
+    }
+    
+    .btn-secondary {
+        background-color: #F2EFE7;
+        color: #006A71;
+        border: 2px solid #006A71;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e5e2da;
+    }
+</style>
+
+<div class="login-required-container">
+    <div class="message-box">
+        <h1>Login Required</h1>
+        <p>You need to be logged in to access the contact page. Please log in to your account or sign up if you don't have one.</p>
+        <div class="buttons">
+            <a href="/login" class="btn btn-primary">Log In</a>
+            <a href="/signup" class="btn btn-secondary">Sign Up</a>
+        </div>
+    </div>
+</div>

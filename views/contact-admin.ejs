@@ -1,0 +1,135 @@
+<%- include('partials/header') %>
+
+<style>
+    .admin-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        padding: 30px 20px;
+    }
+    
+    .admin-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .admin-header h1 {
+        color: #006A71;
+        font-size: 28px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .admin-header p {
+        color: #48A6A7;
+        font-size: 16px;
+    }
+    
+    .contact-list {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .contact-card {
+        background-color: #9ACBD0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .contact-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 106, 113, 0.2);
+        padding-bottom: 10px;
+    }
+    
+    .contact-title {
+        color: #006A71;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .contact-date {
+        color: #006A71;
+        font-size: 14px;
+        opacity: 0.7;
+    }
+    
+    .contact-info {
+        margin-bottom: 15px;
+    }
+    
+    .contact-info p {
+        margin-bottom: 5px;
+        color: #006A71;
+    }
+    
+    .contact-info strong {
+        font-weight: 600;
+        margin-right: 5px;
+    }
+    
+    .contact-message {
+        background-color: rgba(242, 239, 231, 0.5);
+        padding: 15px;
+        border-radius: 6px;
+        color: #006A71;
+        line-height: 1.5;
+    }
+    
+    .no-contacts {
+        text-align: center;
+        padding: 40px;
+        background-color: #9ACBD0;
+        border-radius: 8px;
+        color: #006A71;
+        font-size: 18px;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .contact-date {
+            margin-top: 5px;
+        }
+    }
+</style>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Contact Submissions</h1>
+        <p>View all messages submitted through the contact form</p>
+    </div>
+    
+    <div class="contact-list">
+        <% if (contacts && contacts.length > 0) { %>
+            <% contacts.forEach(contact => { %>
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <div class="contact-title"><%= contact.subject %></div>
+                        <div class="contact-date"><%= new Date(contact.createdAt).toLocaleString() %></div>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <p><strong>From:</strong> <%= contact.name %> (<%= contact.email %>)</p>
+                        <p><strong>User:</strong> <%= contact.userDetails ? contact.userDetails.username : 'Unknown' %></p>
+                    </div>
+                    
+                    <div class="contact-message">
+                        <%= contact.message %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="no-contacts">
+                <p>No contact submissions yet.</p>
+            </div>
+        <% } %>
+    </div>
+</div>
