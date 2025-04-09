@@ -8,6 +8,7 @@ const morgan = require('morgan');
 // Import routes
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
+const profileRoutes = require('./routes/profile');
 const pagesRoutes = require('./routes/pages');
 
 // Initialize app
@@ -54,6 +55,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/profile', profileRoutes);
 app.use('/', pagesRoutes);
 
 // 404 handler - must be before the error handler

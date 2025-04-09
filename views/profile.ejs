@@ -1,0 +1,350 @@
+<%- include('partials/header') %>
+
+<style>
+    .profile-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px 20px;
+    }
+
+    .profile-card {
+        background-color: #9ACBD0;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 600px;
+        overflow: hidden;
+    }
+
+    .profile-header {
+        background-color: #006A71;
+        color: #F2EFE7;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .profile-header h1 {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .profile-header p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .profile-content {
+        padding: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #006A71;
+        font-weight: 600;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #F2EFE7;
+        border-radius: 6px;
+        background-color: #F2EFE7;
+        color: #006A71;
+        font-size: 16px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #48A6A7;
+        box-shadow: 0 0 5px rgba(72, 166, 167, 0.3);
+    }
+
+    button {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+
+    button:hover {
+        background-color: #48A6A7;
+    }
+
+    .tabs {
+        display: flex;
+        border-bottom: 1px solid rgba(0, 106, 113, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        color: #006A71;
+        font-weight: 600;
+        opacity: 0.7;
+        transition: opacity 0.3s, border-bottom 0.3s;
+    }
+
+    .tab.active {
+        opacity: 1;
+        border-bottom: 3px solid #006A71;
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .success-message, .error-message {
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        display: none;
+    }
+
+    .success-message {
+        background-color: rgba(72, 166, 167, 0.2);
+        color: #006A71;
+        border: 1px solid rgba(72, 166, 167, 0.4);
+    }
+
+    .error-message {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.4);
+    }
+
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 20px 15px;
+        }
+        
+        .profile-header h1 {
+            font-size: 20px;
+        }
+        
+        .profile-content {
+            padding: 15px;
+        }
+        
+        .tab {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h1>User Profile</h1>
+            <p>Manage your account information</p>
+        </div>
+        
+        <div class="profile-content">
+            <div class="tabs">
+                <div class="tab active" data-tab="profile-info">Profile Information</div>
+                <div class="tab" data-tab="change-password">Change Password</div>
+            </div>
+            
+            <div id="profile-info" class="tab-content active">
+                <div id="profile-success" class="success-message"></div>
+                <div id="profile-error" class="error-message"></div>
+                
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" value="<%= user.username %>" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<%= user.email %>" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" value="<%= user.profile.age %>" min="1" max="120">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="height">Height</label>
+                        <input type="text" id="height" name="height" value="<%= user.profile.height %>">
+                    </div>
+                    
+                    <button type="submit">Update Profile</button>
+                </form>
+            </div>
+            
+            <div id="change-password" class="tab-content">
+                <div id="password-success" class="success-message"></div>
+                <div id="password-error" class="error-message"></div>
+                
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" name="currentPassword" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" name="newPassword" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" name="confirmPassword" required>
+                    </div>
+                    
+                    <button type="submit">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Hide any messages when switching tabs
+                document.querySelectorAll('.success-message, .error-message').forEach(msg => {
+                    msg.style.display = 'none';
+                });
+            });
+        });
+        
+        // Profile update form
+        const profileForm = document.getElementById('profile-form');
+        const profileSuccess = document.getElementById('profile-success');
+        const profileError = document.getElementById('profile-error');
+        
+        profileForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('username').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                age: document.getElementById('age').value.trim(),
+                height: document.getElementById('height').value.trim()
+            };
+            
+            // Hide previous messages
+            profileSuccess.style.display = 'none';
+            profileError.style.display = 'none';
+            
+            // Send update request
+            fetch('/profile/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    profileSuccess.textContent = data.message || 'Profile updated successfully';
+                    profileSuccess.style.display = 'block';
+                } else {
+                    profileError.textContent = data.message || 'Failed to update profile';
+                    profileError.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Profile update error:', error);
+                profileError.textContent = 'An error occurred. Please try again.';
+                profileError.style.display = 'block';
+            });
+        });
+        
+        // Password change form
+        const passwordForm = document.getElementById('password-form');
+        const passwordSuccess = document.getElementById('password-success');
+        const passwordError = document.getElementById('password-error');
+        
+        passwordForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                currentPassword: document.getElementById('current-password').value,
+                newPassword: document.getElementById('new-password').value,
+                confirmPassword: document.getElementById('confirm-password').value
+            };
+            
+            // Validate passwords match
+            if (formData.newPassword !== formData.confirmPassword) {
+                passwordError.textContent = 'New passwords do not match';
+                passwordError.style.display = 'block';
+                return;
+            }
+            
+            // Hide previous messages
+            passwordSuccess.style.display = 'none';
+            passwordError.style.display = 'none';
+            
+            // Send password change request
+            fetch('/profile/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    passwordSuccess.textContent = data.message || 'Password changed successfully';
+                    passwordSuccess.style.display = 'block';
+                    passwordForm.reset(); // Clear the form
+                } else {
+                    passwordError.textContent = data.message || 'Failed to change password';
+                    passwordError.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Password change error:', error);
+                passwordError.textContent = 'An error occurred. Please try again.';
+                passwordError.style.display = 'block';
+            });
+        });
+    });
+</script>
+
+<%- include('partials/footer') %>
