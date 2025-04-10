@@ -1,0 +1,102 @@
+<div class="profile-container">
+  <h1>My Profile</h1>
+  
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <img ng-src="{{profile.avatar || '/img/default-avatar.png'}}" alt="Profile Picture">
+      </div>
+      <div class="profile-info">
+        <h2>{{profile.name}}</h2>
+        <p>Member since: {{profile.createdAt | date:'MMMM yyyy'}}</p>
+      </div>
+      <div class="profile-actions" ng-if="!editMode">
+        <button class="btn primary" ng-click="editMode = true">Edit Profile</button>
+      </div>
+    </div>
+    
+    <div class="profile-body" ng-if="!editMode">
+      <div class="profile-section">
+        <h3>Personal Information</h3>
+        <div class="profile-field">
+          <label>Email:</label>
+          <span>{{profile.email}}</span>
+        </div>
+        <div class="profile-field">
+          <label>Age:</label>
+          <span>{{profile.age || 'Not specified'}}</span>
+        </div>
+        <div class="profile-field">
+          <label>Height:</label>
+          <span>{{profile.height || 'Not specified'}}</span>
+        </div>
+        <div class="profile-field">
+          <label>Weight:</label>
+          <span>{{profile.weight || 'Not specified'}}</span>
+        </div>
+      </div>
+      
+      <div class="profile-section">
+        <h3>Fitness Goals</h3>
+        <div class="profile-field">
+          <label>Primary Goal:</label>
+          <span>{{profile.primaryGoal || 'Not specified'}}</span>
+        </div>
+        <div class="profile-field">
+          <label>Weekly Target:</label>
+          <span>{{profile.weeklyTarget || 'Not specified'}} workouts</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="profile-edit-form" ng-if="editMode">
+      <form ng-submit="updateProfile()">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" ng-model="profile.name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" ng-model="profile.email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" ng-model="profile.age">
+        </div>
+        
+        <div class="form-group">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" ng-model="profile.height">
+        </div>
+        
+        <div class="form-group">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" ng-model="profile.weight">
+        </div>
+        
+        <div class="form-group">
+          <label for="primaryGoal">Primary Goal</label>
+          <select id="primaryGoal" ng-model="profile.primaryGoal">
+            <option value="weight_loss">Weight Loss</option>
+            <option value="muscle_gain">Muscle Gain</option>
+            <option value="endurance">Endurance</option>
+            <option value="flexibility">Flexibility</option>
+            <option value="general_fitness">General Fitness</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="weeklyTarget">Weekly Target (workouts)</label>
+          <input type="number" id="weeklyTarget" ng-model="profile.weeklyTarget" min="1" max="7">
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Save Changes</button>
+          <button type="button" class="btn" ng-click="editMode = false">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,248 @@
+<%- include('partials/header') %>
+
+<style>
+    .admin-dashboard {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        padding: 30px 20px;
+    }
+    
+    .admin-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .admin-header h1 {
+        color: #006A71;
+        font-size: 28px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .admin-header p {
+        color: #48A6A7;
+        font-size: 16px;
+    }
+    
+    .admin-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto 40px;
+    }
+    
+    .admin-card {
+        background-color: #9ACBD0;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-align: center;
+    }
+    
+    .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .admin-card h2 {
+        color: #006A71;
+        font-size: 20px;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+    
+    .admin-card p {
+        color: #006A71;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .admin-card .count {
+        font-size: 36px;
+        font-weight: bold;
+        color: #006A71;
+        margin-bottom: 20px;
+    }
+    
+    .admin-card .btn {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .admin-card .btn:hover {
+        background-color: #48A6A7;
+    }
+    
+    .recent-section {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .recent-section h2 {
+        color: #006A71;
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .recent-messages {
+        background-color: #9ACBD0;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .message-item {
+        background-color: rgba(242, 239, 231, 0.5);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .message-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    .message-subject {
+        font-weight: bold;
+        color: #006A71;
+    }
+    
+    .message-date {
+        color: #006A71;
+        opacity: 0.7;
+        font-size: 14px;
+    }
+    
+    .message-preview {
+        color: #006A71;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+    
+    .message-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .message-sender {
+        color: #006A71;
+        font-size: 14px;
+    }
+    
+    .message-status {
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .status-unread {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .status-read {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .status-replied {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .no-messages {
+        text-align: center;
+        padding: 30px;
+        color: #006A71;
+    }
+    
+    @media (max-width: 768px) {
+        .admin-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .message-header {
+            flex-direction: column;
+        }
+        
+        .message-date {
+            margin-top: 5px;
+        }
+    }
+</style>
+
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back, <%= user.username %>!</p>
+    </div>
+    
+    <div class="admin-cards">
+        <div class="admin-card">
+            <h2>Contact Messages</h2>
+            <p>Manage user inquiries and messages</p>
+            <div class="count"><%= stats.totalMessages %></div>
+            <a href="/contact/admin" class="btn">View All Messages</a>
+        </div>
+        
+        <div class="admin-card">
+            <h2>Registered Users</h2>
+            <p>Manage user accounts</p>
+            <div class="count"><%= stats.totalUsers %></div>
+            <a href="/admin/users" class="btn">Manage Users</a>
+        </div>
+        
+        <div class="admin-card">
+            <h2>Unread Messages</h2>
+            <p>Messages requiring attention</p>
+            <div class="count"><%= stats.unreadMessages %></div>
+            <a href="/contact/admin" class="btn">View Unread</a>
+        </div>
+    </div>
+    
+    <div class="recent-section">
+        <h2>Recent Messages</h2>
+        <div class="recent-messages">
+            <% if (recentMessages && recentMessages.length > 0) { %>
+                <% recentMessages.forEach(message => { %>
+                    <div class="message-item">
+                        <div class="message-header">
+                            <div class="message-subject"><%= message.subject %></div>
+                            <div class="message-date"><%= new Date(message.createdAt).toLocaleString() %></div>
+                        </div>
+                        <div class="message-preview">
+                            <%= message.message.length > 100 ? message.message.substring(0, 100) + '...' : message.message %>
+                        </div>
+                        <div class="message-footer">
+                            <div class="message-sender">From: <%= message.name %> (<%= message.email %>)</div>
+                            <div class="message-status status-<%= message.status %>"><%= message.status.charAt(0).toUpperCase() + message.status.slice(1) %></div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-messages">
+                    <p>No messages to display.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

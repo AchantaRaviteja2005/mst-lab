@@ -35,6 +35,7 @@
         padding: 20px;
         margin-bottom: 20px;
         box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease;
     }
     
     .contact-header {
@@ -89,6 +90,67 @@
         font-size: 18px;
     }
     
+    .status-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .status-unread {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .status-read {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .status-replied {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .contact-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .action-btn {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+    
+    .action-btn:hover {
+        background-color: #48A6A7;
+    }
+    
+    .mark-read {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .mark-replied {
+        background-color: #28a745;
+    }
+    
+    .delete-btn {
+        background-color: #dc3545;
+    }
+    
+    .delete-btn:hover {
+        background-color: #c82333;
+    }
+    
     @media (max-width: 768px) {
         .contact-header {
             flex-direction: column;
@@ -97,6 +159,10 @@
         
         .contact-date {
             margin-top: 5px;
+        }
+        
+        .contact-actions {
+            flex-direction: column;
         }
     }
 </style>
@@ -119,10 +185,25 @@
                     <div class="contact-info">
                         <p><strong>From:</strong> <%= contact.name %> (<%= contact.email %>)</p>
                         <p><strong>User:</strong> <%= contact.userDetails ? contact.userDetails.username : 'Unknown' %></p>
+                        <p><strong>Status:</strong> 
+                            <span class="status-badge status-<%= contact.status || 'unread' %>">
+                                <%= (contact.status || 'unread').charAt(0).toUpperCase() + (contact.status || 'unread').slice(1) %>
+                            </span>
+                        </p>
                     </div>
                     
                     <div class="contact-message">
                         <%= contact.message %>
+                    </div>
+                    
+                    <div class="contact-actions">
+                        <% if (contact.status === 'unread') { %>
+                            <button class="action-btn mark-read" data-id="<%= contact._id %>">Mark as Read</button>
+                        <% } %>
+                        <% if (contact.status !== 'replied') { %>
+                            <button class="action-btn mark-replied" data-id="<%= contact._id %>">Mark as Replied</button>
+                        <% } %>
+                        <button class="action-btn delete-btn" data-id="<%= contact._id %>">Delete Message</button>
                     </div>
                 </div>
             <% }); %>
@@ -133,3 +214,135 @@
         <% } %>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mark as read buttons
+        const markReadButtons = document.querySelectorAll('.mark-read');
+        markReadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contactId = this.getAttribute('data-id');
+                updateStatus(contactId, 'read', this);
+            });
+        });
+        
+        // Mark as replied buttons
+        const markRepliedButtons = document.querySelectorAll('.mark-replied');
+        markRepliedButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contactId = this.getAttribute('data-id');
+                updateStatus(contactId, 'replied', this);
+            });
+        });
+        
+        // Delete message buttons
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const contactId = this.getAttribute('data-id');
+                if (confirm('Are you sure you want to delete this message? This action cannot be undone.')) {
+                    deleteMessage(contactId, this);
+                }
+            });
+        });
+        
+        // Function to update status
+        function updateStatus(contactId, status, buttonElement) {
+            // Disable button to prevent multiple clicks
+            buttonElement.disabled = true;
+            buttonElement.textContent = 'Updating...';
+            
+            fetch(`/contact/admin/mark-${status}/${contactId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the UI
+                    const contactCard = buttonElement.closest('.contact-card');
+                    const statusBadge = contactCard.querySelector('.status-badge');
+                    
+                    // Update status badge
+                    statusBadge.className = `status-badge status-${status}`;
+                    statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                    
+                    // Remove the button
+                    buttonElement.remove();
+                    
+                    // If marked as replied, remove the "Mark as Read" button too
+                    if (status === 'replied') {
+                        const markReadBtn = contactCard.querySelector('.mark-read');
+                        if (markReadBtn) markReadBtn.remove();
+                    }
+                    
+                    // Show success message
+                    alert(`Message marked as ${status} successfully!`);
+                } else {
+                    // Re-enable button on error
+                    buttonElement.disabled = false;
+                    buttonElement.textContent = `Mark as ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+                    alert('Failed to update status. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Re-enable button on error
+                buttonElement.disabled = false;
+                buttonElement.textContent = `Mark as ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+                alert('An error occurred. Please try again.');
+            });
+        }
+        
+        // Function to delete message
+        function deleteMessage(contactId, buttonElement) {
+            // Disable button to prevent multiple clicks
+            buttonElement.disabled = true;
+            buttonElement.textContent = 'Deleting...';
+            
+            fetch(`/contact/admin/delete/${contactId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the contact card from the UI
+                    const contactCard = buttonElement.closest('.contact-card');
+                    contactCard.style.opacity = '0';
+                    setTimeout(() => {
+                        contactCard.remove();
+                        
+                        // If no more contacts, show the "no contacts" message
+                        const contactList = document.querySelector('.contact-list');
+                        if (contactList.children.length === 0) {
+                            const noContacts = document.createElement('div');
+                            noContacts.className = 'no-contacts';
+                            noContacts.innerHTML = '<p>No contact submissions yet.</p>';
+                            contactList.appendChild(noContacts);
+                        }
+                    }, 300);
+                    
+                    // Show success message
+                    alert('Message deleted successfully!');
+                } else {
+                    // Re-enable button on error
+                    buttonElement.disabled = false;
+                    buttonElement.textContent = 'Delete Message';
+                    alert('Failed to delete message. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Re-enable button on error
+                buttonElement.disabled = false;
+                buttonElement.textContent = 'Delete Message';
+                alert('An error occurred. Please try again.');
+            });
+        }
+    });
+</script>

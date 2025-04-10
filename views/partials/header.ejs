@@ -29,6 +29,9 @@
                         <a href="/profile" class="dropdown-item">Profile</a>
                         <a href="/dashboard" class="dropdown-item">Dashboard</a>
                         <a href="/fitness-hub" class="dropdown-item">Fitness Hub</a>
+                        <% if (user && user.role === 'admin') { %>
+                            <a href="/admin/dashboard" class="dropdown-item">Admin Dashboard</a>
+                        <% } %>
                         <a href="/auth/logout" class="dropdown-item">Logout</a>
                     </div>
                 </li>

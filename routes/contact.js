@@ -2,14 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Contact = require('../models/Contact');
 const User = require('../models/User');
-
-// Middleware to check if user is authenticated
-const isAuthenticated = (req, res, next) => {
-  if (req.session.user) {
-    return next();
-  }
-  res.status(401).json({ success: false, message: 'Authentication required' });
-};
+const { isAuthenticated, isAdmin } = require('../middleware/auth');
 
 // Submit contact form
 router.post('/submit', isAuthenticated, async (req, res) => {
@@ -49,11 +42,9 @@ router.post('/submit', isAuthenticated, async (req, res) => {
   }
 });
 
-// Admin route to view all contact submissions (for demonstration purposes)
-router.get('/admin', isAuthenticated, async (req, res) => {
+// Admin route to view all contact submissions
+router.get('/admin', isAdmin, async (req, res) => {
   try {
-    // In a real application, you would check if the user is an admin
-    // For demonstration, we'll just show the contact submissions
     const contacts = await Contact.find().sort({ createdAt: -1 });
     
     // Get user details for each contact
@@ -79,6 +70,42 @@ router.get('/admin', isAuthenticated, async (req, res) => {
       message: 'Failed to load contact submissions',
       user: req.session.user
     });
+  }
+});
+
+// Mark message as read
+router.post('/admin/mark-read/:id', isAdmin, async (req, res) => {
+  try {
+    const contactId = req.params.id;
+    await Contact.findByIdAndUpdate(contactId, { status: 'read' });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Mark read error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Mark message as replied
+router.post('/admin/mark-replied/:id', isAdmin, async (req, res) => {
+  try {
+    const contactId = req.params.id;
+    await Contact.findByIdAndUpdate(contactId, { status: 'replied' });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Mark replied error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// Delete message
+router.delete('/admin/delete/:id', isAdmin, async (req, res) => {
+  try {
+    const contactId = req.params.id;
+    await Contact.findByIdAndDelete(contactId);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete message error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 

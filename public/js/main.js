@@ -1,18 +1,6 @@
 // Common JavaScript functionality for the application
 
-// Check if user is logged in (based on localStorage)
-function isLoggedIn() {
-    return localStorage.getItem('loggedIn') === 'true';
-}
-
-// Redirect to login page if not logged in
-function requireLogin(redirectUrl = '/login') {
-    if (!isLoggedIn()) {
-        window.location.href = redirectUrl;
-        return false;
-    }
-    return true;
-}
+// Global utility functions that can be used with or without Angular
 
 // Format date to readable string
 function formatDate(date) {
@@ -36,4 +24,18 @@ function handleApiError(error, defaultMessage = 'An error occurred') {
 function showNotification(message, type = 'info') {
     // Implementation depends on your UI design
     alert(message);
+}
+
+// Angular-specific utilities will be defined in the Angular app
+// These functions are kept for backward compatibility with non-Angular parts of the app
+function isLoggedIn() {
+    return localStorage.getItem('loggedIn') === 'true';
+}
+
+function requireLogin(redirectUrl = '/login') {
+    if (!isLoggedIn()) {
+        window.location.href = redirectUrl;
+        return false;
+    }
+    return true;
 }

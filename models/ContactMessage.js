@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
-const ContactSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
+const ContactMessageSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -24,8 +19,7 @@ const ContactSchema = new mongoose.Schema({
   },
   message: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   status: {
     type: String,
@@ -38,4 +32,4 @@ const ContactSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Contact', ContactSchema);
+module.exports = mongoose.model('ContactMessage', ContactMessageSchema);

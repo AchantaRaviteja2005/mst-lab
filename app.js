@@ -11,6 +11,8 @@ const dashboardRoutes = require('./routes/dashboard');
 const profileRoutes = require('./routes/profile');
 const contactRoutes = require('./routes/contact');
 const pagesRoutes = require('./routes/pages');
+const apiRoutes = require('./routes/api');
+const adminRoutes = require('./routes/admin');
 
 // Initialize app
 const app = express();
@@ -20,8 +22,19 @@ mongoose.connect('mongodb://localhost:27017/fitracker', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+.then(() => {
+  console.log('MongoDB connected successfully');
+  
+  // Check if the connection is actually established
+  if (mongoose.connection.readyState === 1) {
+    console.log('MongoDB connection state: Connected (1)');
+  } else {
+    console.log('MongoDB connection state:', mongoose.connection.readyState);
+  }
+})
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+});
 
 // Middleware
 app.use(express.json());
@@ -58,6 +71,8 @@ app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/profile', profileRoutes);
 app.use('/contact', contactRoutes);
+app.use('/api', apiRoutes);
+app.use('/admin', adminRoutes);
 app.use('/', pagesRoutes);
 
 // 404 handler - must be before the error handler

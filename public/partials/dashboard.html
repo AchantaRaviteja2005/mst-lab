@@ -1,0 +1,42 @@
+<div class="dashboard-container">
+  <h1>My Dashboard</h1>
+  
+  <div class="stats-summary" ng-if="dashboardData.stats">
+    <div class="stat-card">
+      <h3>Total Workouts</h3>
+      <p class="stat-value">{{dashboardData.stats.totalWorkouts || 0}}</p>
+    </div>
+    <div class="stat-card">
+      <h3>This Week</h3>
+      <p class="stat-value">{{dashboardData.stats.weeklyWorkouts || 0}}</p>
+    </div>
+    <div class="stat-card">
+      <h3>Streak</h3>
+      <p class="stat-value">{{dashboardData.stats.currentStreak || 0}} days</p>
+    </div>
+  </div>
+  
+  <div class="recent-workouts">
+    <h2>Recent Workouts</h2>
+    <div ng-if="dashboardData.workouts.length === 0" class="empty-state">
+      <p>No workouts recorded yet. Start tracking your fitness journey today!</p>
+      <button class="btn primary" ng-click="addWorkout()">Add Workout</button>
+    </div>
+    
+    <div ng-if="dashboardData.workouts.length > 0" class="workout-list">
+      <div class="workout-item" ng-repeat="workout in dashboardData.workouts">
+        <div class="workout-date">{{workout.date | date:'MMM d, yyyy'}}</div>
+        <div class="workout-type">{{workout.type}}</div>
+        <div class="workout-duration">{{workout.duration}} minutes</div>
+        <div class="workout-actions">
+          <button class="btn small" ng-click="editWorkout(workout)">Edit</button>
+          <button class="btn small danger" ng-click="deleteWorkout(workout._id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="add-workout-section">
+    <button class="btn primary" ng-click="addWorkout()">Add New Workout</button>
+  </div>
+</div>

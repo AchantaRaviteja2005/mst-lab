@@ -1,0 +1,203 @@
+<%- include('partials/header') %>
+
+<style>
+    .admin-login-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .admin-login-card {
+        background-color: #9ACBD0;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+    }
+    
+    .admin-login-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .admin-login-header h1 {
+        color: #006A71;
+        font-size: 24px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .admin-login-header p {
+        color: #006A71;
+        font-size: 16px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #006A71;
+        font-weight: 500;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #F2EFE7;
+        border-radius: 5px;
+        background-color: #F2EFE7;
+        color: #006A71;
+        font-size: 16px;
+    }
+    
+    .form-group input:focus {
+        outline: none;
+        border-color: #006A71;
+        box-shadow: 0 0 5px rgba(0, 106, 113, 0.3);
+    }
+    
+    .admin-login-button {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s;
+    }
+    
+    .admin-login-button:hover {
+        background-color: #48A6A7;
+    }
+    
+    .admin-login-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    
+    .error-message {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    
+    .setup-link {
+        text-align: center;
+        margin-top: 20px;
+        color: #006A71;
+        font-size: 14px;
+    }
+    
+    .setup-link a {
+        color: #006A71;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+    
+    .setup-link a:hover {
+        color: #48A6A7;
+    }
+</style>
+
+<div class="admin-login-container">
+    <div class="admin-login-card">
+        <div class="admin-login-header">
+            <h1>Admin Login</h1>
+            <p>Access the administrator dashboard</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" id="loginButton" class="admin-login-button">Login</button>
+        </form>
+        
+        <div class="setup-link">
+            <p>Need to create an admin account? <a href="/admin/setup">Setup Admin</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        adminLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Disable button and show loading state
+            loginButton.disabled = true;
+            loginButton.textContent = 'Logging in...';
+            
+            // Hide previous error messages
+            errorMessage.style.display = 'none';
+            
+            // Get form data
+            const formData = {
+                username: document.getElementById('username').value.trim(),
+                password: document.getElementById('password').value
+            };
+            
+            // Send login request
+            fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Reset button state
+                loginButton.disabled = false;
+                loginButton.textContent = 'Login';
+                
+                if (data.success) {
+                    // Redirect to admin dashboard
+                    window.location.href = '/admin/dashboard';
+                } else {
+                    // Show error message
+                    errorMessage.textContent = data.message || 'Invalid username or password';
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                
+                // Reset button state
+                loginButton.disabled = false;
+                loginButton.textContent = 'Login';
+                
+                // Show error message
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
+            });
+        });
+    });
+</script>

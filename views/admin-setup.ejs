@@ -1,0 +1,207 @@
+<%- include('partials/header') %>
+
+<style>
+    .setup-container {
+        background-color: #F2EFE7;
+        min-height: calc(100vh - 60px);
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .setup-card {
+        background-color: #9ACBD0;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+    }
+    
+    .setup-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .setup-header h1 {
+        color: #006A71;
+        font-size: 24px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .setup-header p {
+        color: #006A71;
+        font-size: 16px;
+    }
+    
+    .setup-button {
+        background-color: #006A71;
+        color: #F2EFE7;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s;
+    }
+    
+    .setup-button:hover {
+        background-color: #48A6A7;
+    }
+    
+    .setup-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    
+    .result-message {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+        display: none;
+    }
+    
+    .success-message {
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+    
+    .error-message {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+    }
+    
+    .admin-details {
+        margin-top: 20px;
+        background-color: rgba(242, 239, 231, 0.5);
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+    }
+    
+    .admin-details h3 {
+        color: #006A71;
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    
+    .detail-item {
+        margin-bottom: 8px;
+        color: #006A71;
+    }
+    
+    .detail-item strong {
+        font-weight: 600;
+        margin-right: 5px;
+    }
+</style>
+
+<div class="setup-container">
+    <div class="setup-card">
+        <div class="setup-header">
+            <h1>Admin Setup</h1>
+            <p>Create an administrator account for FITRACKER</p>
+        </div>
+        
+        <button id="setupButton" class="setup-button">Create Admin Account</button>
+        
+        <div id="successMessage" class="result-message success-message">
+            Admin account created successfully!
+        </div>
+        
+        <div id="errorMessage" class="result-message error-message">
+            Failed to create admin account.
+        </div>
+        
+        <div id="adminDetails" class="admin-details">
+            <h3>Admin Account Details</h3>
+            <div class="detail-item"><strong>Username:</strong> <span id="adminUsername">admin</span></div>
+            <div class="detail-item"><strong>Password:</strong> <span id="adminPassword">admin123</span></div>
+            <div class="detail-item"><strong>Email:</strong> <span id="adminEmail">admin@fitracker.com</span></div>
+            <div class="detail-item"><strong>Role:</strong> <span id="adminRole">admin</span></div>
+            <p style="margin-top: 15px; color: #dc3545; font-weight: bold;">Please save these credentials and change the password after first login!</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const setupButton = document.getElementById('setupButton');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const adminDetails = document.getElementById('adminDetails');
+        const adminUsername = document.getElementById('adminUsername');
+        const adminPassword = document.getElementById('adminPassword');
+        const adminEmail = document.getElementById('adminEmail');
+        const adminRole = document.getElementById('adminRole');
+        
+        setupButton.addEventListener('click', function() {
+            // Disable button and show loading state
+            setupButton.disabled = true;
+            setupButton.textContent = 'Creating Admin...';
+            
+            // Hide previous messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            adminDetails.style.display = 'none';
+            
+            // Send request to create admin
+            fetch('/admin/setup-api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Reset button state
+                setupButton.disabled = false;
+                setupButton.textContent = 'Create Admin Account';
+                
+                if (data.success) {
+                    // Show success message and admin details
+                    successMessage.style.display = 'block';
+                    adminDetails.style.display = 'block';
+                    
+                    // Update admin details if provided
+                    if (data.user) {
+                        adminUsername.textContent = data.user.username || 'admin';
+                        adminEmail.textContent = data.user.email || 'admin@fitracker.com';
+                        adminRole.textContent = data.user.role || 'admin';
+                    }
+                    
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    // Show error message
+                    errorMessage.textContent = data.message || 'Failed to create admin account.';
+                    errorMessage.style.display = 'block';
+                    
+                    // Scroll to error message
+                    errorMessage.scrollIntoView({ behavior: 'smooth' });
+                }
+            })
+            .catch(error => {
+                console.error('Admin setup error:', error);
+                
+                // Reset button state
+                setupButton.disabled = false;
+                setupButton.textContent = 'Create Admin Account';
+                
+                // Show error message
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.style.display = 'block';
+                
+                // Scroll to error message
+                errorMessage.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    });
+</script>

@@ -19,6 +19,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  },
   profile: {
     age: {
       type: Number,
@@ -69,6 +74,33 @@ UserSchema.pre('save', async function(next) {
     next();
   } catch (error) {
     next(error);
+  }
+});
+
+// Validate that only one admin can exist
+UserSchema.pre('save', async function(next) {
+  // Only check when creating a new admin user or changing role to admin
+  if (this.isNew && this.role === 'admin' || 
+      this.isModified('role') && this.role === 'admin') {
+    
+    try {
+      // Check if an admin already exists (excluding this document if it's being updated)
+      const adminExists = await this.constructor.findOne({ 
+        role: 'admin',
+        _id: { $ne: this._id } // Exclude current document if it's being updated
+      });
+      
+      if (adminExists) {
+        const error = new Error('Only one admin user can exist in the system');
+        return next(error);
+      }
+      
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
   }
 });
 

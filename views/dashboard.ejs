@@ -225,10 +225,10 @@
     <div class="side-panel">
         <h2>Profile Details</h2>
         <div class="profile-info">
-            <div class="profile-item"><strong>Username:</strong> <%= user.username %></div>
-            <div class="profile-item"><strong>Account:</strong> <%= user.profile.accountType %></div>
-            <div class="profile-item"><strong>Age:</strong> <%= user.profile.age %></div>
-            <div class="profile-item"><strong>Height:</strong> <%= user.profile.height %></div>
+            <div class="profile-item"><strong>Username:</strong> <%= user.username || 'User' %></div>
+            <div class="profile-item"><strong>Account:</strong> <%= user.profile.accountType || 'Standard' %></div>
+            <div class="profile-item"><strong>Age:</strong> <%= user.profile.age || '25' %></div>
+            <div class="profile-item"><strong>Height:</strong> <%= user.profile.height || '175' %></div>
         </div>
         <hr style="margin:10px 0; border-color:rgba(242,239,231,0.3);">
         <a href="/fitness-hub" style="color:#F2EFE7; text-decoration:none; font-weight:bold;">
@@ -249,31 +249,31 @@
             <!-- Water -->
             <div class="card">
                 <h3>Water Consumed</h3>
-                <p id="waterDisplay"><%= user.fitnessData.water %> L</p>
+                <p><%= user.fitnessData.water || '2' %> L</p>
                 <input type="number" id="waterInput" placeholder="Liters" step="0.1">
-                <button onclick="updateValue('water')">Update</button>
+                <button onclick="updateFitnessData('water')">Update</button>
             </div>
 
             <!-- Calories Consumed -->
             <div class="card">
                 <h3>Calories Consumed</h3>
-                <p id="caloriesInDisplay"><%= user.fitnessData.caloriesIn %> kcal</p>
+                <p><%= user.fitnessData.caloriesIn || '0' %> kcal</p>
                 <input type="number" id="caloriesInInput" placeholder="kcal">
-                <button onclick="updateValue('caloriesIn')">Update</button>
+                <button onclick="updateFitnessData('caloriesIn')">Update</button>
             </div>
 
             <!-- Calories Burned -->
             <div class="card">
                 <h3>Calories Burned</h3>
-                <p id="caloriesOutDisplay"><%= user.fitnessData.caloriesOut %> kcal</p>
+                <p><%= user.fitnessData.caloriesOut || '0' %> kcal</p>
                 <input type="number" id="caloriesOutInput" placeholder="kcal">
-                <button onclick="updateValue('caloriesOut')">Update</button>
+                <button onclick="updateFitnessData('caloriesOut')">Update</button>
             </div>
 
             <!-- Fitness Score -->
             <div class="card">
                 <h3>Fitness Score</h3>
-                <p id="fitnessScore"><%= user.fitnessData.fitnessScore %>/10</p>
+                <p><%= user.fitnessData.fitnessScore || '0' %>/10</p>
                 <button onclick="calculateFitnessScore()">Recalculate</button>
             </div>
         </div>
@@ -281,69 +281,70 @@
 </div>
 
 <script>
-    function updateValue(type) {
-        let input, display, value;
-        
-        if (type === 'water') {
-            input = document.getElementById('waterInput');
-            display = document.getElementById('waterDisplay');
-            value = input.value;
-            if (value) display.innerText = value + ' L';
-        }
-        if (type === 'caloriesIn') {
-            input = document.getElementById('caloriesInInput');
-            display = document.getElementById('caloriesInDisplay');
-            value = input.value;
-            if (value) display.innerText = value + ' kcal';
-        }
-        if (type === 'caloriesOut') {
-            input = document.getElementById('caloriesOutInput');
-            display = document.getElementById('caloriesOutDisplay');
-            value = input.value;
-            if (value) display.innerText = value + ' kcal';
-        }
-        
-        if (value) {
-            // Send update to server
-            fetch('/dashboard/update', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ type, value })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    alert('Failed to update: ' + (data.message || 'Unknown error'));
-                }
-                input.value = ''; // Clear input field
-            })
-            .catch(error => {
-                console.error('Update error:', error);
-                alert('An error occurred while updating');
-            });
-        }
+// JavaScript functions to handle dashboard updates
+function updateFitnessData(type) {
+    const inputElement = document.getElementById(type + 'Input');
+    const value = inputElement.value;
+    
+    if (!value || isNaN(value)) {
+        alert('Please enter a valid number');
+        return;
     }
+    
+    // Send data to server
+    fetch('/dashboard/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type, value }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the display
+            const displayElement = inputElement.parentElement.querySelector('p');
+            let unit = '';
+            
+            if (type === 'water') {
+                unit = ' L';
+            } else if (type === 'caloriesIn' || type === 'caloriesOut') {
+                unit = ' kcal';
+            }
+            
+            displayElement.textContent = value + unit;
+            inputElement.value = '';
+                        
+        } else {
+            alert('Failed to update: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating');
+    });
+}
 
-    function calculateFitnessScore() {
-        fetch('/dashboard/calculate-score', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('fitnessScore').innerText = `${data.score}/10`;
-            } else {
-                alert('Failed to calculate score: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Score calculation error:', error);
-            alert('An error occurred while calculating fitness score');
-        });
-    }
+function calculateFitnessScore() {
+    fetch('/dashboard/calculate-score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the display
+            const scoreElement = document.querySelector('.card:last-child p');
+            scoreElement.textContent = data.score + '/10';
+        } else {
+            alert('Failed to calculate score: ' + (data.message || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while calculating fitness score');
+    });
+}
 </script>

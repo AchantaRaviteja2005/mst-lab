@@ -70,6 +70,7 @@ router.post('/update', isAuthenticated, async (req, res) => {
       id: updatedUser._id,
       username: updatedUser.username,
       email: updatedUser.email,
+      role: updatedUser.role, // Include role in session
       profile: updatedUser.profile
     };
     

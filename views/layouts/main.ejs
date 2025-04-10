@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="fitrackerApp">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %> | FITRACKER</title>
     <link rel="stylesheet" href="/css/styles.css">
     <%- style %>
+    <!-- AngularJS from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular-route.min.js"></script>
 </head>
 <body>
     <%- body %>
     
     <script src="/js/main.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/controllers/mainController.js"></script>
+    <script src="/js/controllers/dashboardController.js"></script>
+    <script src="/js/services/dataService.js"></script>
     <%- script %>
 </body>
 </html>
